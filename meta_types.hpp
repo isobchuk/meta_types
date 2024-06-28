@@ -32,6 +32,10 @@
 // Suppoted since C++17 as a last fully-supported standard for gcc and clang
 static_assert((__cplusplus >= 201703L), "Supported only with C++17 and newer!");
 
+#if __cpp_concepts
+#include <concepts>
+#endif
+
 // General namespace for the module
 namespace iso::meta_type {
 
@@ -61,6 +65,9 @@ concept const_value = requires(T) {
   T::value;
   typename T::type;
 };
+
+template <typename T, typename Type>
+concept const_value_of_type = const_value<T> && std::same_as<Type, typename T::type>;
 #endif
 
 // Type traits for SFINAE to check type for ConstValue
