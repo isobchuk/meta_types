@@ -52,10 +52,15 @@ template <const auto param> struct ConstValue final {
   };
 };
 
+/**
+ * @brief Template to convert reference to constexpr
+ *
+ * @tparam param: Reference that will be casted to constexpr
+ */
 template <const auto &param> struct ConstReference final {
   using type = decltype(param);
   static constexpr auto &value = param;
-  struct ConstValueT {
+  struct ConstReferenceT {
     using type = void;
   };
 };
@@ -81,6 +86,24 @@ concept const_value = requires(T) {
 
 template <typename T, typename Type>
 concept const_value_of_type = const_value<T> && std::same_as<Type, typename T::type>;
+
+// Concept for C++20 to check type for ConstReference
+template <typename T>
+concept const_reference = requires(T) {
+  typename T::ConstReferenceT;
+  T::value;
+  typename T::type;
+};
+
+template <typename T, typename Type>
+concept const_reference_of_type = const_reference<T> && std::same_as<Type, typename T::type>;
+
+// Array operation
+template <typename T>
+concept array = std::is_array_v<T>;
+
+template <typename T, typename Type>
+concept array_of_type = std::is_array_v<T> && std::same_as<Type, T>;
 #endif
 
 // Type traits for SFINAE to check type for ConstValue
