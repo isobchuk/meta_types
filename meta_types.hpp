@@ -52,10 +52,23 @@ template <const auto param> struct ConstValue final {
   };
 };
 
+template <const auto &param> struct ConstReference final {
+  using type = decltype(param);
+  static constexpr auto &value = param;
+  struct ConstValueT {
+    using type = void;
+  };
+};
+
 // Cast to the real const value
 template <const auto value> inline constexpr auto const_v = ConstValue<value>{};
 // Cast to the real const type
 template <const auto value> using const_t = ConstValue<value>;
+
+// Cast to the real const reference
+template <const auto &value> inline constexpr auto const_ref_v = ConstReference<value>{};
+// Cast to the real const reference
+template <const auto &value> using const_ref_t = ConstReference<value>;
 
 // Concept for C++20 to check type for ConstValue
 #ifdef __cpp_concepts
